@@ -10,50 +10,56 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
 
 
 def main():
-	API_KEY = '426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo'
-	updater = Updater(API_KEY)
+    API_KEY = '426807183:AAGHLEjcrwrvFKCPY_BAR8j7v45Sav61gMo'
+    updater = Updater(API_KEY)
 
-	dp = updater.dispatcher
-	dp.add_handler(CommandHandler('start',greet_user)) # функция вызывается на команду start
-	#dp.add_handler(MessageHandler(Filters.text, echo_message))
-	dp.add_handler(CommandHandler('planet', planet_info))
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler('start',greet_user)) # функция вызывается на команду start
+    #dp.add_handler(MessageHandler(Filters.text, echo_message))
+    dp.add_handler(CommandHandler('planet', planet_info))
+    dp.add_handler(MessageHandler(Filters.text, check_constellation))
 
-
-	updater.start_polling()
-	updater.idle()
+    updater.start_polling()
+    updater.idle()
 
 def greet_user(bot, update): # bot, update - обязательные параметры при работе с ботом
-	text_for_user = 'Привет новый пользователь!'
-	print(text_for_user)
-	update.message.reply_text(update)
-	
+    text_for_user = 'Привет новый пользователь!'
+    print(text_for_user)
+    update.message.reply_text(update)
+    
 def echo_message(bot, update):
-	user_text = update.message.text
-	print(user_text)
-	update.message.reply_text(user_text)
+    user_text = update.message.text
+    print(user_text)
+    update.message.reply_text(user_text)
 
 def planet_info(bot, update):
-	update.message.reply_text('Введите название планеты на английском: ')
-	user_planet = str(update.message.text).lower()
-	planet = None
-	today = datetime.datetime.now().strftime('%Y/%m/%d')
-	if  user_planet == 'mars':
-		planet = ephem.Mars(today)
-	elif user_planet == 'venus':
-		planet = ephem.Venus(today)
-	elif user_planet == 'mercury':
-		planet = ephem.Mercury(today)
-	elif user_planet == 'jupiter':
-		planet = ephem.Jupiter(today)
-	elif user_planet == 'saturn':
-		planet = ephem.Saturn(today)			
-	elif user_planet == 'uranus':
-		planet = ephem.Uranus(today)	
-	elif user_planet == 'neptune':
-		planet = ephem.Neptune(today)	
-	elif user_planet == 'pluto':
-		planet = ephem.Pluto(today)	
+    update.message.reply_text('Введите название планеты на английском: ')
 
-	update.message.reply_text(str(ephem.constellation(planet)[1]))
+def check_constellation(bot, update):
+    solar_system = ['mars','venus', 'mercury','jupiter','saturn','uranus','neptune','pluto']
+    user_planet = str (update.message.text).lower()
+    planet = None
+    today = datetime.datetime.now().strftime('%Y/%m/%d')
+    if user_planet in solar_system:
+        if user_planet == 'mars':
+            planet = ephem.Mars(today)
+        elif user_planet == 'venus':
+            planet = ephem.Venus(today)
+        elif user_planet == 'mercury':
+            planet = ephem.Mercury(today)
+        elif user_planet == 'jupiter':
+            planet = ephem.Jupiter(today)
+        elif user_planet == 'saturn':
+            planet = ephem.Saturn(today)
+        elif user_planet == 'uranus':
+            planet = ephem.Uranus (today)
+        elif user_planet == 'neptune':
+            planet = ephem.Neptune (today)
+        elif user_planet == 'pluto':
+            planet = ephem.Pluto(today)
+
+        update.message.reply_text(ephem.constellation(planet)[1])
+    else:
+        update.message.reply_text('Введена неизвестная планета')
 
 main()
